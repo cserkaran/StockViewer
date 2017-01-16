@@ -1,0 +1,70 @@
+﻿<infUI:BaseWindow x:Class="StockViewer.UI.Shell"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StockViewer.UI"
+        xmlns:resources="clr-namespace:StockViewer.UI.Resources"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:inf="clr-namespace:StockViewer.Infrastructure;assembly=StockViewer.Infrastructure"
+        xmlns:infUI="clr-namespace:StockViewer.Infrastructure.UI;assembly=StockViewer.Infrastructure.UI"
+        xmlns:prism="http://prismlibrary.com/"
+        mc:Ignorable="d" 
+        Title="{x:Static resources:Strings.StockViewer}"
+        Icon="/Icons/StockViewer.ico"
+        WindowState="Maximized">
+    <Grid x:Name="Main">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="0"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid x:Name="StockSummary"  Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="7*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" x:Name="Header">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Image VerticalAlignment="Center" Grid.Column="0" Margin="5" Source="./Icons/StockMarketAnalysis.ico"/>
+
+                <TextBlock VerticalAlignment="Center" Grid.Column="1" Margin="20,0,0,0" Text="{x:Static resources:Strings.StockViewerLogo}" 
+                               FontSize="45"
+                               TextWrapping="NoWrap" 
+                               Foreground="OrangeRed" Opacity="0.85"
+                               Canvas.Left="20" 
+                               TextAlignment="Left" FontWeight="Normal"/>
+
+
+            </Grid>
+
+            <Grid Grid.Row="1" x:Name="StockData">
+                <Border CornerRadius="5" Margin="70,100,100,70" Background="Transparent" BorderThickness="2" BorderBrush="OrangeRed">
+                    <ContentControl prism:RegionManager.RegionName="{x:Static inf:RegionNames.StockSummaryRegion}" ></ContentControl>
+                </Border>
+            </Grid>
+
+        </Grid>
+
+
+        <Grid Grid.Column="1" x:Name="SystemTaskBar">
+            <Grid.Resources>
+                <ContextMenu x:Key="NotifyIconContextMenu">
+                    <MenuItem Header="{x:Static resources:Strings.ActionClose}" 
+                              Click="OnMenuCloseClick"/>
+                </ContextMenu>
+            </Grid.Resources>
+            <tb:TaskbarIcon x:Name="SystemTaskbarIcon" 
+                            ContextMenu="{StaticResource NotifyIconContextMenu}"
+                            ToolTipText="{x:Static resources:Strings.StockViewer}" 
+                            IconSource="/Icons/StockViewer.ico"/>
+        </Grid>
+
+    </Grid>
+</infUI:BaseWindow>

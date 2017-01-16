@@ -1,0 +1,10 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    
+    <Color x:Key="CxAppGrey">#d9d9d9</Color>
+    <Color x:Key="CxAppGreyMediumDark">#c6c6c6</Color>
+    <Color x:Key="CxFxApp">#4f565b</Color>
+    <Color x:Key="CxAppLightGreen">#56bb4e</Color>
+    <Color x:Key="CxAppHighlightGreen">#7cc54e</Color>
+</ResourceDictionary>

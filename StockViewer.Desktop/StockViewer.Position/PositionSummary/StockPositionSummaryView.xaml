@@ -1,0 +1,136 @@
+﻿<UserControl x:Class="StockViewer.Position.PositionSummary.StockPositionSummaryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:StockViewer.Infrastructure.Converters;assembly=StockViewer.Infrastructure"
+             xmlns:infUiSearch="clr-namespace:StockViewer.Infrastructure.UI.Search;assembly=StockViewer.Infrastructure.UI"
+             xmlns:resources="clr-namespace:StockViewer.Position.Resources"
+             xmlns:localConverters="clr-namespace:StockViewer.Position.Converters"
+             xmlns:stockpositioncontacts="clr-namespace:StockViewer.Position.Contracts;assembly=StockViewer.Position.Contracts"
+             xmlns:infUI="clr-namespace:StockViewer.Infrastructure.UI;assembly=StockViewer.Infrastructure.UI"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:interactivity="http://prismlibrary.com/"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="900">
+    <UserControl.Resources>
+        <DataTemplate x:Key="GainLossTemplate" DataType="{x:Type stockpositioncontacts:StockPositionSummaryItem}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="150"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock x:Name="DisplayText" Margin="10,0,0,0" Grid.Column="1" 
+                                     Text="{Binding Converter={x:Static converters:PercentConverter.Instance}, 
+                                     Path=GainLossPercent}" 
+                                     Foreground="{Binding Converter={x:Static  converters:DecimalToColorConverter.Instance}, 
+                                     Path=GainLossPercent}" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="White"></Setter>
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+
+            <infUiSearch:SearchTextBox Grid.Column="0" x:Name="SearchBox" Grid.Row="0" 
+                                   Width="150" Margin="5,5,5,0"  
+                                   Text="{Binding Position.SearchViewModel.CurrentSearchPattern,Mode=TwoWay,Delay=1000,UpdateSourceTrigger=PropertyChanged}"
+                                   CancelSearchCommand="{Binding Position.SearchViewModel.CancelSearchCommand}"
+                                   Foreground="White"
+                                   LabelText="{x:Static resources:Resources.ActionSearchSymbol}"
+                                   HorizontalAlignment="Left"></infUiSearch:SearchTextBox>
+
+            <Button Grid.Column="1" Margin="5,5,5,0" Background="YellowGreen" Foreground="White"
+                    Content="{x:Static resources:Resources.AddSymbols}"
+                    Command="{Binding Position.AddSymbolsCommand}"/>
+
+            <Button Grid.Column="2" Margin="5,5,100,0" Background="OrangeRed" Foreground="White"
+                    Content="{x:Static resources:Resources.RemoveSymbols}" 
+                    Command="{Binding Position.RemoveSymbolsCommand}"
+                    CommandParameter="{Binding ElementName=StockList,Path=SelectedItems}"/>
+
+            <TextBlock Grid.Column="3" Margin="5,5,0,5" x:Name="RefreshRateLabel" Text="{x:Static resources:Resources.RefreshRate}"></TextBlock>
+            
+             <TextBlock Grid.Column="4" Margin="5,5,0,5" Width="85" x:Name="RefreshRateValue" 
+                        Text="{Binding ElementName=RefreshRateSlider,Path=Value,Converter={x:Static localConverters:RefreshRateValueConverter.Instance}}"></TextBlock>
+            
+            <TextBlock Grid.Column="5" Margin="50,5,0,5" Text="{x:Static resources:Resources.Fast}"></TextBlock>
+            
+            <Slider x:Name="RefreshRateSlider" Grid.Column="6"  Margin="5,5,0,5" IsSnapToTickEnabled="True" Visibility="Visible"
+                    Interval="1" Maximum="10" Width="150" Minimum="1">
+                <!--<i:Interaction.Triggers>
+                    --><!--<i:EventTrigger EventName="ValueChanged">
+                        <interactivity:InvokeCommandAction Command="{Binding Position.ChangeRefreshRateCommand}" />
+                    </i:EventTrigger>--><!--
+                </i:Interaction.Triggers>-->
+            </Slider>
+            <TextBlock Margin="5,5,0,5" Grid.Column="7" Text="{x:Static resources:Resources.Off}"></TextBlock>
+        </Grid>
+       
+        <ScrollViewer Grid.Row="6" Margin="5,0,5,5" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <ListView x:Name="StockList" BorderThickness="0" Width="Auto"
+                      ItemsSource="{Binding Path=Position.Items}" 
+                      SelectedItem="{Binding Path=CurrentPositionSummaryItem, Mode=TwoWay}" 
+                      IsSynchronizedWithCurrentItem="True"
+                      ScrollViewer.CanContentScroll="True">
+                
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="{x:Static resources:Resources.Symbol}" 
+            		                    DisplayMemberBinding="{Binding Path=TickerSymbol}" 
+            		                    Width="85" />
+                        <GridViewColumn Header="{x:Static resources:Resources.Shares}"  
+                                        DisplayMemberBinding="{Binding Path=Shares}"
+                                        Width="65" />
+                        <GridViewColumn Header="{x:Static resources:Resources.Last}"  
+                                        DisplayMemberBinding="{Binding Converter={x:Static converters:CurrencyConverter.Instance}, Path=CurrentPrice}"
+                                        Width="65" />
+                        <GridViewColumn Header="{x:Static resources:Resources.CostBasis}"  
+                                        DisplayMemberBinding="{Binding Converter={x:Static converters:CurrencyConverter.Instance}, Path=CostBasis}"
+                                        Width="85" />
+                        <GridViewColumn Header="{x:Static resources:Resources.MarketValue}"
+                                        DisplayMemberBinding="{Binding Converter={x:Static converters:CurrencyConverter.Instance}, Path=MarketValue}"
+                                        Width="85" />
+                        <GridViewColumn Header="{x:Static resources:Resources.GainLossPercentage}" 
+                                        CellTemplate="{StaticResource GainLossTemplate}" Width="85"/>
+                      
+                        <GridViewColumn Header="{x:Static resources:Resources.WL52}"
+                                        DisplayMemberBinding="{Binding Converter={x:Static converters:CurrencyConverter.Instance}, Path=Wl52}"
+                                        Width="85" />
+                        <GridViewColumn Header="{x:Static resources:Resources.WH52}"
+                                        DisplayMemberBinding="{Binding Converter={x:Static converters:CurrencyConverter.Instance}, Path=Wh52}"
+                                        Width="100" />
+
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </ScrollViewer>
+    </Grid>
+        <Grid x:Name="LoadingIndicator" Visibility="{Binding Position.IsBusy,Converter={x:Static converters:BoolToVisibilityConverter.Instance}}"
+                                        Background="{StaticResource WindowBackground}" Opacity="0.8">
+            <infUI:LoadingIndicator></infUI:LoadingIndicator>
+        </Grid>
+    </Grid>
+</UserControl>
